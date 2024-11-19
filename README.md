@@ -21,8 +21,8 @@ Before you begin, ensure you have the following installed:
 1. **Clone the Repository**
 
    ```bash
-   git clone <repository_url>
-   cd <repository_directory>
+   git clone https://github.com/Srijapotha/user-management-system-assignment.git
+   cd user-management-system-assignment
    ```
 
 2. **Install Dependencies**
