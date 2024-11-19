@@ -5,17 +5,21 @@ import Modal from "./Modal";
 
 const removeUser = async (id) => {
    try {
+      // Send a DELETE request to remove the user by ID
       const response = await axios.delete(
          `https://jsonplaceholder.typicode.com/users/${id}`
       );
+      // Return a success response without error
       return { error: null };
    } catch (error) {
+      // Return the error if the request fails
       return { error: error };
    }
 };
+
 const updateUser = async (id, userData) => {
    try {
-      // Transform userData into the required structure
+      // Prepare user data in the required format for the API
       const bodyData = {
          name: `${userData.firstName} ${userData.lastName}`,
          email: userData.email,
@@ -24,34 +28,38 @@ const updateUser = async (id, userData) => {
          },
       };
 
+      // Send a PUT request to update the user data by ID
       const response = await axios.put(
          `https://jsonplaceholder.typicode.com/users/${id}`,
          bodyData,
          {
             headers: {
-               "Content-type": "application/json; charset=UTF-8", // Content type for JSON
+               "Content-type": "application/json; charset=UTF-8", // Set the request content type to JSON
             },
          }
       );
 
-      return response.data; // Return success response
+      // Return the updated user data on success
+      return response.data;
    } catch (error) {
+      // Log and return null on error
       console.error("Error updating user:", error);
-      return null; // Return the error
+      return null;
    }
 };
 
 export default function UserList({ users, setUsers }) {
-   const [selectedId, setSelectedId] = useState(null);
+   const [selectedId, setSelectedId] = useState(null); // Stores the ID of the selected user
    const [deletingUser, setDeletingUser] = useState({
+      // Tracks the deletion status and error
       status: false,
       err: "",
    });
    const deleteUser = async (e) => {
-      const id = parseInt(e.target.getAttribute("data-id"));
-      if (!id) return;
+      if (!selectedId) return;
       setDeletingUser((c) => ({ ...c, status: true }));
-      const { error } = await removeUser(id);
+      // make api call to remove user
+      const { error } = await removeUser(selectedId);
       if (error) {
          setDeletingUser({
             status: false,
@@ -60,11 +68,13 @@ export default function UserList({ users, setUsers }) {
          return;
       }
 
-      setUsers((c) => c.filter((user) => user.id !== id));
+      // removing user from list
+      setUsers((c) => c.filter((user) => user.id !== selectedId));
       setDeletingUser({
          status: false,
          err: "",
       });
+      // automatically close modal
       document.getElementById("delete-modal-close").click();
    };
    return (
@@ -139,7 +149,6 @@ export default function UserList({ users, setUsers }) {
                   </label>
                   <button
                      onClick={deleteUser}
-                     data-id={selectedId ?? undefined}
                      className="btn btn-error"
                      disabled={deletingUser.status}
                   >
@@ -156,11 +165,13 @@ export default function UserList({ users, setUsers }) {
                return await updateUser(selectedId, data);
             }}
             onSuccess={(data) => {
+               // Update the user list
                setUsers((c) =>
                   c.map((user) => (user.id === selectedId ? data : user))
                );
             }}
             defaultValue={
+               // Pre-filled data for editing an existing user
                selectedId ? users.find((user) => user.id === selectedId) : {}
             }
          />

@@ -2,10 +2,17 @@ import React, { useState } from "react";
 import Joi from "joi";
 
 export default function Modal(props) {
-   const { id, heading, description, apiFunction, onSuccess, defaultValue } =
-      props;
-   const [message, setMessage] = useState(null);
-   const [isSubmitting, setIsSubmitting] = useState(false);
+   const {
+      id, // User's unique ID (for editing or identifying a user)
+      heading, // Modal title (e.g., "Edit User" or "Add User")
+      description, // Modal description for user guidance
+      apiFunction, // Function to handle API calls (e.g., save or update user data)
+      onSuccess, // Callback function on successful API call
+      defaultValue, // Pre-filled data for editing (only for "edit" mode)
+   } = props;
+
+   const [message, setMessage] = useState(null); // Stores error or success messages
+   const [isSubmitting, setIsSubmitting] = useState(false); // Tracks submission state for button enable/disable
 
    const handleSubmit = async (e) => {
       e.preventDefault();
@@ -99,7 +106,7 @@ export default function Modal(props) {
                         <span className="label-text">Email</span>
                      </div>
                      <input
-                        type="text"
+                        type="email"
                         placeholder="e.g. 4tM8S@example.com"
                         className="input input-bordered"
                         name="email"
