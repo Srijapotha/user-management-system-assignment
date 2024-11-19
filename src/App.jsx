@@ -3,7 +3,7 @@ import axios from "axios";
 import UserList from "./components/UserList";
 import AddUser from "./components/AddUser";
 import Error from "./components/Error";
-const fetchUsers = async (isMounted, setUsers) => {
+const fetchUsers = async (isMounted, setUsers, setError) => {
    try {
       const response = await axios.get(
          "https://jsonplaceholder.typicode.com/users"
@@ -13,16 +13,18 @@ const fetchUsers = async (isMounted, setUsers) => {
       }
    } catch (error) {
       console.error("Failed to fetch users:", error);
-      return false;
+      setError(error);
+      return null;
    }
 };
 function App() {
-   const [users, setUsers] = useState(undefined);
+   const [users, setUsers] = useState(null);
+   const [error, setError] = useState(false);
 
    useEffect(() => {
       let isMounted = true;
 
-      fetchUsers(isMounted, setUsers);
+      fetchUsers(isMounted, setUsers, setError);
 
       return () => {
          isMounted = false;
@@ -37,10 +39,13 @@ function App() {
                   <AddUser setUsers={setUsers} />
                   <UserList users={users} setUsers={setUsers} />
                </>
-            ) : users === null ? (
+            ) : error ? (
                <Error />
             ) : (
-               <div className="fixed inset-0 z-20 flex items-center justify-center">
+               <div
+                  id="loading"
+                  className="fixed inset-0 z-20 flex items-center justify-center"
+               >
                   <span className="loading loading-spinner loading-lg" />
                </div>
             )}
